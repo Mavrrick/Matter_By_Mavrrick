@@ -37,12 +37,12 @@ metadata {
 
 //capability commands
 void on() { 
-    String cmd = matter.invoke(device.endpointId, 0x0006, 0x0001)
+    String cmd = matter.invoke(device.getDataValue("endpointId"), 0x0006, 0x0001)
     parent.sendToDevice(cmd)
 }
 
 void off() { 
-    String cmd = matter.invoke(device.endpointId, 0x0006, 0x0000)
+    String cmd = matter.invoke(device.getDataValue("endpointId"), 0x0006, 0x0000)
     parent.sendToDevice(cmd)
 }
 
@@ -61,13 +61,13 @@ void setLevel(Object value, Object rate=0) { //new set level routine to enable i
         cmdFields.add(matter.cmdField(0x04, 0x00, newLevel2)) 
         cmdFields.add(matter.cmdField(0x05, 0x01, transition))
         log.debug "Endpoint: ${device.endpointId} commands: ${cmdFields}"   
-        cmds = matter.invoke(device.endpointId, 0x0008, 0x0000, cmdFields)   
+        cmds = matter.invoke(device.getDataValue("endpointId"), 0x0008, 0x0000, cmdFields)   
     } else {
         List<Map<String, String>> cmdFields = []
         cmdFields.add(matter.cmdField(0x04, 0x00, newLevel2)) 
         cmdFields.add(matter.cmdField(0x05, 0x01, transition))
         log.debug "Endpoint: ${device.endpointId} commands: ${cmdFields}"
-        cmds = matter.invoke(device.endpointId, 0x0008, 0x0004, cmdFields) 
+        cmds = matter.invoke(device.getDataValue("endpointId"), 0x0008, 0x0004, cmdFields) 
     }
     parent.sendToDevice(cmds)
 }
@@ -76,20 +76,22 @@ void startLevelChange(direction) {
     if (logEnable) log.debug "Start level change in ${direction}"  
         switch(direction) {
         case "up":
+            if (logEnable) log.debug "Found ${direction} setting value to 0"
             value = 0;
         break;
         case "down":
+            if (logEnable) log.debug "Found ${direction} setting value to 1" 
             value = 1;
         break; 
     }
     dirValue = intToHexStr(value)
-    rateValue = intToHexStr(10)
-    if (logEnable) log.debug "Sending command to change in ${direction} with value ${dirValue}"
+    rateValue = intToHexStr(levelChgStep)
+    if (logEnable) log.debug "Sending command to change in ${direction} numvalue: ${value} value ${dirValue} Rate Number ${levelChgStep} hex rate ${rateValue}"
     List<Map<String, String>> cmdFields = []
     cmdFields.add(matter.cmdField(0x04, 0x00, dirValue))
     cmdFields.add(matter.cmdField(0x04, 0x01, rateValue))
-    cmds = matter.invoke(device.endpointId, 0x0008, 0x0001, cmdFields)            
-    parent.sendToDevice(cmds)
+    cmds = matter.invoke(0x02, 0x0008, 0x0001, cmdFields)            
+    sendToDevice(cmds)
 }
 
 void stopLevelChange() {
@@ -99,7 +101,7 @@ void stopLevelChange() {
     
     List<Map<String, String>> cmdFields = []
 //    cmdFields.add(matter.cmdField(0x04, 0x00, dirValue))
-    cmds = matter.invoke(device.endpointId, 0x0008, 0x0003)            
+    cmds = matter.invoke(device.getDataValue("endpointId"), 0x0008, 0x0003)            
     parent.sendToDevice(cmds)
 }
 
@@ -121,7 +123,7 @@ void setHue(Object value) {
         cmdFields.add(matter.cmdField(0x04, 0x01, direction))        
         cmdFields.add(matter.cmdField(0x05, 0x02, transition))
         if (logEnable) log.debug "Endpoint: ${device.endpointId} commands: ${cmdFields}"   
-        cmds = matter.invoke(device.endpointId, 0x0300, 0x0000, cmdFields)   
+        cmds = matter.invoke(device.getDataValue("endpointId"), 0x0300, 0x0000, cmdFields)   
     } else {
         on()
         List<Map<String, String>> cmdFields = []
@@ -129,7 +131,7 @@ void setHue(Object value) {
         cmdFields.add(matter.cmdField(0x04, 0x01, direction)) 
         cmdFields.add(matter.cmdField(0x05, 0x02, transition))
         if (logEnable) log.debug "Endpoint: ${device.endpointId} commands: ${cmdFields}"
-        cmds = matter.invoke(device.endpointId, 0x0300, 0x0000, cmdFields) 
+        cmds = matter.invoke(device.getDataValue("endpointId"), 0x0300, 0x0000, cmdFields) 
     } 
     parent.sendToDevice(cmds)
     sendEvent(name: "colorMode", value: "RGB")
@@ -151,7 +153,7 @@ void setSaturation(Object value) {
         cmdFields.add(matter.cmdField(0x04, 0x01, direction))        
         cmdFields.add(matter.cmdField(0x05, 0x02, transition))
         if (logEnable) log.debug "Endpoint: ${device.endpointId} commands: ${cmdFields}"   
-        cmds = matter.invoke(device.endpointId, 0x0300, 0x0003, cmdFields)   
+        cmds = matter.invoke(device.getDataValue("endpointId"), 0x0300, 0x0003, cmdFields)   
     } else {
         on()
         List<Map<String, String>> cmdFields = []
@@ -159,7 +161,7 @@ void setSaturation(Object value) {
         cmdFields.add(matter.cmdField(0x04, 0x01, direction)) 
         cmdFields.add(matter.cmdField(0x05, 0x02, transition))
         if (logEnable) log.debug "Endpoint: ${device.endpointId} commands: ${cmdFields}"
-        cmds = matter.invoke(device.endpointId, 0x0300, 0x0003, cmdFields) 
+        cmds = matter.invoke(device.getDataValue("endpointId"), 0x0300, 0x0003, cmdFields) 
     } 
     parent.sendToDevice(cmds)
     sendEvent(name: "colorMode", value: "RGB")
@@ -183,7 +185,7 @@ void setHueSat(Object hue, Object sat) {
         cmdFields.add(matter.cmdField(0x04, 0x01, newSat))        
         cmdFields.add(matter.cmdField(0x05, 0x02, transition))
         if (logEnable) log.debug "Endpoint: ${device.endpointId} commands: ${cmdFields}"   
-        cmds = matter.invoke(device.endpointId, 0x0300, 0x0006, cmdFields)   
+        cmds = matter.invoke(device.getDataValue("endpointId"), 0x0300, 0x0006, cmdFields)   
     } else {
         on()
         List<Map<String, String>> cmdFields = []
@@ -191,7 +193,7 @@ void setHueSat(Object hue, Object sat) {
         cmdFields.add(matter.cmdField(0x04, 0x01, newSat)) 
         cmdFields.add(matter.cmdField(0x05, 0x02, transition))
         if (logEnable) log.debug "Endpoint: ${device.endpointId} commands: ${cmdFields}"
-        cmds = matter.invoke(device.endpointId, 0x0300, 0x0006, cmdFields) 
+        cmds = matter.invoke(device.getDataValue("endpointId"), 0x0300, 0x0006, cmdFields) 
     } 
     parent.sendToDevice(cmds)
     sendEvent(name: "colorMode", value: "RGB")
@@ -216,14 +218,14 @@ void setColorTemperature(colortemperature, level=null, transitionTime=0) { // Ne
         cmdFields.add(matter.cmdField(0x05, 0x00, ctValue)) 
         cmdFields.add(matter.cmdField(0x05, 0x01, transition))
         if (logEnable) log.debug "Endpoint: ${device.endpointId} commands: ${cmdFields}"   
-        cmds = matter.invoke(device.endpointId, 0x0300, 0x000A, cmdFields)   
+        cmds = matter.invoke(device.getDataValue("endpointId"), 0x0300, 0x000A, cmdFields)   
     } else {
         on()
         List<Map<String, String>> cmdFields = []
         cmdFields.add(matter.cmdField(0x05, 0x00, ctValue)) 
         cmdFields.add(matter.cmdField(0x05, 0x01, transition))
         if (logEnable) log.debug "Endpoint: ${device.endpointId} commands: ${cmdFields}"   
-        cmds = matter.invoke(device.endpointId, 0x0300, 0x000A, cmdFields)
+        cmds = matter.invoke(device.getDataValue("endpointId"), 0x0300, 0x000A, cmdFields)
     }
     parent.sendToDevice(cmds)
     sendEvent(name: "colorMode", value: "CT")
@@ -277,11 +279,11 @@ void refresh() {
 String refreshCmd() {
     List<Map<String, String>> attributePaths = []
     
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0006, 0x0000))
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0008, 0x0000))
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0300, 0x0000))
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0300, 0x0001))
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0300, 0x0007))
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0006, 0x0000))
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0008, 0x0000))
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0300, 0x0000))
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0300, 0x0001))
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0300, 0x0007))
     
     String cmd = matter.readAttributes(attributePaths)
     return cmd

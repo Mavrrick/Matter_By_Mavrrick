@@ -55,7 +55,7 @@ void refresh() {
 String refreshCmd() {
     List<Map<String, String>> attributePaths = []
       
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0402, 0x0000))        //Temperature mesurement
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0402, 0x0000))        //Temperature mesurement
     
     String cmd = matter.readAttributes(attributePaths)
     return cmd

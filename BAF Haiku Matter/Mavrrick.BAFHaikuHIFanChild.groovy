@@ -259,7 +259,7 @@ void on() {
     autoValue = intToHexStr(value)  
     if (logEnable) log.debug "Setting Fan mode  to Auto"
     List<Map<String, String>> attributeWriteRequests = []
-    attributeWriteRequests.add(matter.attributeWriteRequest(device.endpointId, 0x0202, 0x0000, 0x04, autoValue ))
+    attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0000, 0x04, autoValue ))
     String cmd = matter.writeAttributes(attributeWriteRequests)            
     parent.sendToDevice(cmd)
 }
@@ -269,7 +269,7 @@ void off() {
     autoValue = intToHexStr(value)  
     if (logEnable) log.debug "Setting Fan mode  to Auto"
     List<Map<String, String>> attributeWriteRequests = []
-    attributeWriteRequests.add(matter.attributeWriteRequest(device.endpointId, 0x0202, 0x0000, 0x04, autoValue ))
+    attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0000, 0x04, autoValue ))
     String cmd = matter.writeAttributes(attributeWriteRequests)            
     parent.sendToDevice(cmd)
 }
@@ -312,15 +312,15 @@ void setSpeed(fanspeed) {
         autoValue = intToHexStr(0)  
         if (logEnable) log.debug "Setting Fan mode from Auto to Off"
         List<Map<String, String>> attributeWriteRequests = []
-        attributeWriteRequests.add(matter.attributeWriteRequest(device.endpointId, 0x0202, 0x0000, 0x04, autoValue ))
-        attributeWriteRequests.add(matter.attributeWriteRequest(device.endpointId, 0x0202, 0x0002, 0x04, speedValue ))
+        attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0000, 0x04, autoValue ))
+        attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0002, 0x04, speedValue ))
         String cmd = matter.writeAttributes(attributeWriteRequests)            
         parent.sendToDevice(cmd)
     } else {
     speedValue = intToHexStr(value)  
     if (logEnable) log.debug "Setting Fan Speed percent ${fanspeed}  % ${value} value to ${speedValue}"
     List<Map<String, String>> attributeWriteRequests = []
-    attributeWriteRequests.add(matter.attributeWriteRequest(device.endpointId, 0x0202, 0x0002, 0x04, speedValue ))
+    attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0002, 0x04, speedValue ))
     String cmd = matter.writeAttributes(attributeWriteRequests)            
     parent.sendToDevice(cmd)
     }
@@ -339,7 +339,7 @@ void airDirection(direction) {
     dirValue = intToHexStr(value)  
     if (logEnable) log.debug "Setting Fan Speed direction to ${direction} ${value} value to ${dirValue}"
     List<Map<String, String>> attributeWriteRequests = []
-    attributeWriteRequests.add(matter.attributeWriteRequest(device.endpointId, 0x0202, 0x000B, 0x04, dirValue ))
+    attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x000B, 0x04, dirValue ))
     String cmd = matter.writeAttributes(attributeWriteRequests)            
     parent.sendToDevice(cmd)
 }
@@ -349,7 +349,7 @@ void fanAuto() {
     autoValue = intToHexStr(value)  
     if (logEnable) log.debug "Setting Fan mode  to Auto"
     List<Map<String, String>> attributeWriteRequests = []
-    attributeWriteRequests.add(matter.attributeWriteRequest(device.endpointId, 0x0202, 0x0000, 0x04, autoValue ))
+    attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0000, 0x04, autoValue ))
     String cmd = matter.writeAttributes(attributeWriteRequests)            
     parent.sendToDevice(cmd)
 }
@@ -368,7 +368,7 @@ void whoosh(action) {
     whooshValue = intToHexStr(value)  
     if (logEnable) log.debug "Setting Fan Wind Setting for Woosh to ${action}"
     List<Map<String, String>> attributeWriteRequests = []
-    attributeWriteRequests.add(matter.attributeWriteRequest(device.endpointId, 0x0202, 0x000A, 0x04, whooshValue ))
+    attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x000A, 0x04, whooshValue ))
     String cmd = matter.writeAttributes(attributeWriteRequests)            
     parent.sendToDevice(cmd)
 }
@@ -419,14 +419,14 @@ void refresh() {
  String refreshCmd() {
     List<Map<String, String>> attributePaths = []
     
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0006, 0x0000))         // on/off
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0202, 0x0000))         // FanMode
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0202, 0x0002))         // PercentSetting
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0202, 0x0003))         // PercentCurrent
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0202, 0x000A))         // WindSetting
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0202, 0x000B))         // AirflowDirectionEnum
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0003, 0x0000))         
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0003, 0x0001))                        // Power Configuration Cluster : Status
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0006, 0x0000))         // on/off
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0202, 0x0000))         // FanMode
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0202, 0x0002))         // PercentSetting
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0202, 0x0003))         // PercentCurrent
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0202, 0x000A))         // WindSetting
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0202, 0x000B))         // AirflowDirectionEnum
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0003, 0x0000))         
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0003, 0x0001))                        // Power Configuration Cluster : Status
     
     String cmd = matter.readAttributes(attributePaths)
     return cmd

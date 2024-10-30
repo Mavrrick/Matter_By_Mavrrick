@@ -178,6 +178,7 @@ private void sendFanModeEvent(String rawValue) {
     String descriptionText = "${device.displayName} Mode was set to ${value}"
     if (txtEnable) log.info descriptionText
     device = getChildDevice("${device.deviceNetworkId}-${FAN_ENDPOINT}")
+    if (logEnable) log.debug "sendFanModeEvent(): Sending Fan mode event to ${device}"
     device.sendEvent(name:"Fan_Mode", value:value, descriptionText:descriptionText)
 }
 
@@ -214,6 +215,7 @@ private void sendSpeedEvent(String rawValue) {
     String descriptionText = "${device.displayName} was set to speed ${value}"
     if (txtEnable) log.info descriptionText
     device = getChildDevice("${device.deviceNetworkId}-${FAN_ENDPOINT}")
+    if (logEnable) log.debug "sendSpeedEvent(): Sending Fan speed event to ${device}"
     device.sendEvent(name:"speed", value:value, descriptionText:descriptionText)
 }
 
@@ -222,11 +224,13 @@ private void sendFanDirEvent(String rawValue) {
         String descriptionText = "${device.displayName} airFlow direction is forward direction"
         if (txtEnable) log.info descriptionText
         device = getChildDevice("${device.deviceNetworkId}-${FAN_ENDPOINT}")
+        if (logEnable) log.debug "sendFanDirEvent(): Sending Fan direction event to ${device}"
         device.sendEvent(name:"Airflow_Direction", value:"forward", descriptionText:descriptionText)
     } else if (rawValue == "01"){
         String descriptionText = "${device.displayName} airFlow direction is reverse direction"
         if (txtEnable) log.info descriptionText
         device = getChildDevice("${device.deviceNetworkId}-${FAN_ENDPOINT}")
+        if (logEnable) log.debug "sendFanDirEvent(): Sending Fan direction event to ${device}"
         device.sendEvent(name:"Airflow_Direction", value:"reverse", descriptionText:descriptionText)
     }
 }
@@ -236,11 +240,13 @@ private void sendWindMode(String rawValue) {
         String descriptionText = "${device.displayName} wind mode is Normal"
         if (txtEnable) log.info descriptionText
         device = getChildDevice("${device.deviceNetworkId}-${FAN_ENDPOINT}")
+        if (logEnable) log.debug "sendWindMode(): Sending Wind Mode event to ${device}"
         device.sendEvent(name:"windMode", value:"Normal", descriptionText:descriptionText)
     } else if (rawValue == "02"){
         String descriptionText = "${device.displayName} wind mode is whoosh"
         if (txtEnable) log.info descriptionText
         device = getChildDevice("${device.deviceNetworkId}-${FAN_ENDPOINT}")
+        if (logEnable) log.debug "sendWindMode(): Sending Wind Mode event to ${device}"
         device.sendEvent(name:"windMode", value:"Whoosh", descriptionText:descriptionText)
     }
 }
@@ -251,6 +257,7 @@ private void sendSwitchEvent(String rawValue) {
     String descriptionText = "${device.displayName} was turned ${value}"
     if (txtEnable) log.info descriptionText
     device = getChildDevice("${device.deviceNetworkId}-${CT_ENDPOINT}")
+    if (logEnable) log.debug "sendSwitchEvent(): Sending Switch event to ${device}"
     device.sendEvent(name:"switch", value:value, descriptionText:descriptionText)
 }
 
@@ -261,11 +268,13 @@ private void sendOccupancyEvent(String rawValue) {
         String descriptionText = "${device.displayName} is present"
         if (txtEnable) log.info descriptionText
         device = getChildDevice("${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}")
+        if (logEnable) log.debug "sendOccupancyEvent(): Sending occupancy event to ${device}"
         device.sendEvent(name:"presence", value:"present", descriptionText:descriptionText)
     } else {
         String descriptionText = "${device.displayName} is not present"
         if (txtEnable) log.info descriptionText
         device = getChildDevice("${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}")
+        if (logEnable) log.debug "sendOccupancyEvent(): Sending occupancy event to ${device}"
         device.sendEvent(name:"presence", value:"not present", descriptionText:descriptionText)
     }
 }
@@ -276,6 +285,7 @@ private void sendTempEvent(String rawValue) {
     String descriptionText = "${device.displayName} temperature is ${tempValue}"
     if (txtEnable) log.info descriptionText
     device = getChildDevice("${device.deviceNetworkId}-${TEMP_ENDPOINT}")
+    if (logEnable) log.debug "sendTempEvent(): Sending temperature event to ${device}"
     device.sendEvent(name:"temperature", value:tempValue, descriptionText:descriptionText, unit: "")
 }
 
@@ -285,6 +295,7 @@ private void sendLevelEvent(String rawValue) {
     String descriptionText = "${device.displayName} level was set to ${value}%"
     if (txtEnable) log.info descriptionText
     device = getChildDevice("${device.deviceNetworkId}-${CT_ENDPOINT}")
+    if (logEnable) log.debug "sendLevelEvent(): Sending level event to ${device}"
     device.sendEvent(name:"level", value:value, descriptionText:descriptionText, unit: "%")
 }
 
@@ -342,7 +353,7 @@ void configure() {
     log.warn "configure..."
     sendToDevice(cleanSubscribeCmd())
     sendToDevice(subscribeCmd())
-    sendToDevice(matter.getMatterEndpoints())
+//    sendToDevice(matter.getMatterEndpoints())
     unschedule()
 }
 
@@ -356,7 +367,7 @@ void updated(){
 
 void initialize() {
     log.info "initialize..."
-    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
+//    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
 //    initializeVars(fullInit = true)
     sendToDevice(cleanSubscribeCmd())
     sendToDevice(subscribeCmd())

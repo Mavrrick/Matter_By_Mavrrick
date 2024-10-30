@@ -496,15 +496,17 @@ void startLevelChange(direction) {
     if (logEnable) log.debug "Start level change in ${direction}"  
         switch(direction) {
         case "up":
+            if (logEnable) log.debug "Found ${direction} setting value to 0"
             value = 0;
         break;
         case "down":
+            if (logEnable) log.debug "Found ${direction} setting value to 1" 
             value = 1;
         break; 
     }
     dirValue = intToHexStr(value)
     rateValue = intToHexStr(levelChgStep)
-    if (logEnable) log.debug "Sending command to change in ${direction} with value ${dirValue}"
+    if (logEnable) log.debug "Sending command to change in ${direction} numvalue: ${value} value ${dirValue} Rate Number ${levelChgStep} hex rate ${rateValue}"
     List<Map<String, String>> cmdFields = []
     cmdFields.add(matter.cmdField(0x04, 0x00, dirValue))
     cmdFields.add(matter.cmdField(0x04, 0x01, rateValue))
@@ -668,7 +670,7 @@ void configure() {
     log.warn "configure..."
     sendToDevice(cleanSubscribeCmd())
     sendToDevice(subscribeCmd())
-    sendToDevice(matter.getMatterEndpoints())
+//    sendToDevice(matter.getMatterEndpoints())
     unschedule()
 }
 

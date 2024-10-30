@@ -55,7 +55,7 @@ void refresh() {
 String refreshCmd() {
     List<Map<String, String>> attributePaths = []
     
-        attributePaths.add(matter.attributePath(device.endpointId, 0x0406, 0x0000))        //Occupancy Value
+        attributePaths.add(matter.attributePath(device.getDataValue("endpointId"), 0x0406, 0x0000))        //Occupancy Value
     
     String cmd = matter.readAttributes(attributePaths)
     return cmd
