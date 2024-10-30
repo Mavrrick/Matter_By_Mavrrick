@@ -29,6 +29,7 @@ metadata {
         
     }
     preferences {
+        input(name:"levelChgStep", type:"number", title:"Steps during level change", defaultValue:10)
         input(name:"logEnable", type:"bool", title:"Enable debug logging", defaultValue:false)
         input(name:"txtEnable", type:"bool", title:"Enable descriptionText logging", defaultValue:true)
     }
@@ -91,7 +92,7 @@ void startLevelChange(direction) {
     cmdFields.add(matter.cmdField(0x04, 0x00, dirValue))
     cmdFields.add(matter.cmdField(0x04, 0x01, rateValue))
     cmds = matter.invoke(0x02, 0x0008, 0x0001, cmdFields)            
-    sendToDevice(cmds)
+    parent.sendToDevice(cmds)
 }
 
 void stopLevelChange() {
