@@ -92,7 +92,7 @@ void startLevelChange(direction) {
     List<Map<String, String>> cmdFields = []
     cmdFields.add(matter.cmdField(0x04, 0x00, dirValue))
     cmdFields.add(matter.cmdField(0x04, 0x01, rateValue))
-    cmds = matter.invoke(0x02, 0x0008, 0x0001, cmdFields)            
+    cmds = matter.invoke(0x02, 0x0008, 0x0005, cmdFields)            
     parent.sendToDevice(cmds)
 }
 
@@ -103,7 +103,7 @@ void stopLevelChange() {
     
     List<Map<String, String>> cmdFields = []
 //    cmdFields.add(matter.cmdField(0x04, 0x00, dirValue))
-    cmds = matter.invoke(device.getDataValue("endpointId"), 0x0008, 0x0003)            
+    cmds = matter.invoke(device.getDataValue("endpointId"), 0x0008, 0x0007)            
     parent.sendToDevice(cmds)
 }
 
