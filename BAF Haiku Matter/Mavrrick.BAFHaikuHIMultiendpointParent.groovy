@@ -21,30 +21,7 @@ import groovy.transform.Field
 @Field static final String   TEMP_ENDPOINT= '04'
 @Field static final String   OCCUPANCY_ENDPOINT= '06'
 
-
-@Field Map getFanLevel = [
-    "off": 0
-    ,"speed 1": 1
-	,"speed 2": 18
-	,"speed 3": 34
-    ,"speed 4": 51
-	,"speed 5": 67
-	,"speed 6": 84    
-    ,"speed 7": 100    
-]
-
-@Field Map airDirection = [
-    0: "forward"
-    ,1: "reverse" 
-] 
-
-@Field Map whooshOptions = [
-    0: "off"
-    ,2: "on" 
-]
-
 import groovy.transform.Field
-import hubitat.helper.HexUtils
 
 metadata {
     definition (name: "BAF Haiku H/I Multiendpoint (Parent)", namespace: "Mavrrick", author: "Mavrrick", importUrl: IMPORT_URL) {
@@ -56,7 +33,6 @@ metadata {
 
     }
     preferences {
-//        input(name:"cycleInterval", type:"number", title:"Number of seconds between cycles", defaultValue:30)
         input(name:"logEnable", type:"bool", title:"Enable debug logging", defaultValue:false)
         input(name:"txtEnable", type:"bool", title:"Enable descriptionText logging", defaultValue:true)
     }
