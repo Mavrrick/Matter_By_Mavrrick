@@ -200,6 +200,12 @@ void configure() {
 }
 
 //lifecycle commands
+void installed() {
+    log.info "installed..."
+    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k})) 
+    state.previousSpeed = 0x01
+}
+
 void updated(){
     log.info "updated..."
     log.warn "debug logging is: ${logEnable == true}"

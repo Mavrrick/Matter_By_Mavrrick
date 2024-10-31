@@ -344,15 +344,26 @@ void updated(){
     if (logEnable) runIn(1800,logsOff)
 }
 
+void installed(){
+    if (debugLog) {log.warn "installed(): Driver Installed"}
+    addFanDeviceHelper()
+    addLightDeviceHelper()
+    addTempDeviceHelper()
+    addOccupyDeviceHelper()
+    pauseExecution(3000)
+    initialize()
+}
+
 void initialize() {
     log.info "initialize..."
 //    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
 //    initializeVars(fullInit = true)
     sendToDevice(cleanSubscribeCmd())
+    pauseExecution(5000)
     sendToDevice(subscribeCmd())
     childDNI = getChildDevices().deviceNetworkId
-    log.info "Initialize(): Child DNI's are ${childDNI}"
-    if (childDNI.contains("${device.deviceNetworkId}-${FAN_ENDPOINT}") == false) {
+//    log.info "Initialize(): Child DNI's are ${childDNI}"
+/*    if (childDNI.contains("${device.deviceNetworkId}-${FAN_ENDPOINT}") == false) {
         addFanDeviceHelper()
     }
     if (childDNI.contains("${device.deviceNetworkId}-${CT_ENDPOINT}") == false) {
@@ -363,7 +374,7 @@ void initialize() {
     }
     if (childDNI.contains("${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}") == false) {
         addOccupyDeviceHelper()
-    }
+    } */
 }
 
 void refresh() {
