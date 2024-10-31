@@ -275,7 +275,7 @@ void initialize() {
 
 void refresh() {
     if (logEnable) log.debug "refresh()"
-    sendToDevice(refreshCmd())
+    parent.sendToDevice(refreshCmd())
 }
 
 String refreshCmd() {

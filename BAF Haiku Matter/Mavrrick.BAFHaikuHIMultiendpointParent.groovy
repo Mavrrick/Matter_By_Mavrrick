@@ -525,11 +525,11 @@ void addLightDeviceHelper() {
 
 void addTempDeviceHelper() {
 	//Driver Settings
-	Map deviceType = [namespace:"Mavrrick", typeName: "BAF Haiku H/I Temp - Child"]
+	Map deviceType = [namespace:"Mavrrick", typeName: "BAF Haiku H/I Temprature - Child"]
 	Map deviceTypeBak = [:]
 	String devModel = deviceModel
     String dni = "${device.deviceNetworkId}-${TEMP_ENDPOINT}"
-	Map properties = [endpointId: TEMP_ENDPOINT, label: "BAF Haiku H/I Temp - Child"]
+	Map properties = [endpointId: TEMP_ENDPOINT, label: "BAF Haiku H/I Temprature - Child"]
 	if (debugLog) "Creating Child Light Device"
 
 	def childDev

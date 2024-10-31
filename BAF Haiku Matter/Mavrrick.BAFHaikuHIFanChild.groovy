@@ -121,7 +121,8 @@ void setSpeed(fanspeed) {
     }
     if (device.currentValue("Fan_Mode") == "Auto") {
 //        value = 0
-        autoValue = intToHexStr(0)  
+        autoValue = intToHexStr(0)
+        speedValue = intToHexStr(value)
         if (logEnable) log.debug "Setting Fan mode from Auto to Off"
         List<Map<String, String>> attributeWriteRequests = []
         attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0000, 0x04, autoValue ))
