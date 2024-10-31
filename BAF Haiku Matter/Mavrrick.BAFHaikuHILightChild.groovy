@@ -10,13 +10,14 @@
 
 */
 
-import groovy.transform.Field
+@Field static final String  IMPORT_URL =  'https://raw.githubusercontent.com/Mavrrick/Matter_By_Mavrrick/refs/heads/main/BAF%20Haiku%20Matter/Mavrrick.BAFHaikuHILightChild.groovy'
+
 
 import groovy.transform.Field
 import hubitat.helper.HexUtils
 
 metadata {
-    definition (name: "BAF Haiku H/I Light - Child", namespace: "Mavrrick", author: "Mavrrick") {
+    definition (name: "BAF Haiku H/I Light - Child", namespace: "Mavrrick", author: "Mavrrick", importUrl: IMPORT_URL) {
         capability "Actuator"
         capability "Switch"
         capability 'SwitchLevel'        

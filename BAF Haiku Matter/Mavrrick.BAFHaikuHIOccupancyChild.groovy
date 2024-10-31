@@ -10,15 +10,13 @@
 
 */
 
-import groovy.transform.Field
-
 @Field static final String   DEVICE_TYPE = 'MATTER_TEMP'
+@Field static final String  IMPORT_URL =  'https://raw.githubusercontent.com/Mavrrick/Matter_By_Mavrrick/refs/heads/main/BAF%20Haiku%20Matter/Mavrrick.BAFHaikuHIOccupancyChild.groovy'
 
 import groovy.transform.Field
-import hubitat.helper.HexUtils
 
 metadata {
-    definition (name: "BAF Haiku H/I Occupancy - Child", namespace: "Mavrrick", author: "Mavrrick") {
+    definition (name: "BAF Haiku H/I Occupancy - Child", namespace: "Mavrrick", author: "Mavrrick", importUrl: IMPORT_URL) {
         capability "PresenceSensor"
         capability "Refresh"
 
@@ -41,10 +39,7 @@ void updated(){
 
 void initialize() {
     log.info "initialize..."
-    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
-//    initializeVars(fullInit = true)
-//    sendToDevice(cleanSubscribeCmd())
-//    sendToDevice(subscribeCmd())
+//    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
 }
 
 void refresh() {
