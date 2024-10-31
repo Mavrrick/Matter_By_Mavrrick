@@ -41,7 +41,7 @@ void updated(){
 
 void initialize() {
     log.info "initialize..."
-    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
+//    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
 //    initializeVars(fullInit = true)
 //    sendToDevice(cleanSubscribeCmd())
 //    sendToDevice(subscribeCmd())
