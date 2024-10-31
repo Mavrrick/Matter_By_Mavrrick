@@ -72,6 +72,7 @@ void on() {
     if (logEnable) log.debug "Setting Fan mode to On"
     List<Map<String, String>> attributeWriteRequests = []
     attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0000, 0x04, autoValue ))
+    attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0002, 0x04, state.previousSpeed ))
     String cmd = matter.writeAttributes(attributeWriteRequests)            
     parent.sendToDevice(cmd)
 }
@@ -129,6 +130,7 @@ void setSpeed(fanspeed) {
         attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0002, 0x04, speedValue ))
         String cmd = matter.writeAttributes(attributeWriteRequests)            
         parent.sendToDevice(cmd)
+        state.previousSpeed = speedValue
     } else {
     speedValue = intToHexStr(value)  
     if (logEnable) log.debug "Setting Fan Speed percent ${fanspeed}  % ${value} value to ${speedValue}"
@@ -136,6 +138,7 @@ void setSpeed(fanspeed) {
     attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0002, 0x04, speedValue ))
     String cmd = matter.writeAttributes(attributeWriteRequests)            
     parent.sendToDevice(cmd)
+    state.previousSpeed = speedValue    
     }
 }
 
