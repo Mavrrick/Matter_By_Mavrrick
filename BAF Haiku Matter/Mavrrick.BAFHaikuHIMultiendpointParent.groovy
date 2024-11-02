@@ -40,6 +40,7 @@ metadata {
 
 //parsers
 void parse(String description) {
+    if (logEnable) log.debug "descMap:${description}"
     Map descMap = matter.parseDescriptionAsMap(description)
     if (logEnable) log.debug "descMap:${descMap}"
     switch (descMap.cluster) {        
@@ -375,6 +376,7 @@ void initialize() {
     if (childDNI.contains("${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}") == false) {
         addOccupyDeviceHelper()
     } */
+    sendToDevice(getEndpoints())
 }
 
 void refresh() {
@@ -458,6 +460,12 @@ String cleanSubscribeCmd() {
     attributePaths.add(matter.attributePath(0x01, 0x0406, 0x00))
     
     return matter.cleanSubscribe(0, 0xFFFF, attributePaths)
+}
+
+String getEndpoints() {
+    if (logEnable) log.debug "getEndpoints()"
+    String cmd = matter.getMatterEndpoints() 
+    return cmd
 }
 
 void logsOff(){
