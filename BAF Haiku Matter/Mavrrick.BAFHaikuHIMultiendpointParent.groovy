@@ -376,7 +376,9 @@ void initialize() {
     if (childDNI.contains("${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}") == false) {
         addOccupyDeviceHelper()
     } */
-    sendToDevice(getEndpoints())
+//sendToDevice(getEndpoints())
+    List<Map<String,String>> endpoints = matter.getMatterEndpoints()
+    if (logEnable) log.debug "initialize() Endpoints are ${endpoints}"
 }
 
 void refresh() {
