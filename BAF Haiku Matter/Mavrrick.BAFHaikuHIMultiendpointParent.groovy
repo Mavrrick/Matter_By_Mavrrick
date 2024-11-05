@@ -43,11 +43,39 @@ void parse(String description) {
     if (logEnable) log.debug "descMap:${description}"
     Map descMap = matter.parseDescriptionAsMap(description)
     if (logEnable) log.debug "descMap:${descMap}"
-    switch (descMap.cluster) {        
+    if (descMap.endpoint == "00") {
+        switch (descMap.cluster) {
+            case "001D" :
+                if (descMap.attrId == "0003") { //Endpoint list
+                    state.endpoints = descMap.value
+                    if (logEnable) log.debug "parse(): Endpoints found on device ${descMap.value}"
+                }
+            break
+        }
+    } else {    
+        switch (descMap.cluster) {
+            case "001D" :
+                if (descMap.attrId == "0001") { //list Clusters for endpoint
+                    state.endpointlist = [:]
+                    List clusters = []
+                    if (logEnable) log.debug "parse(): Cluster data found Endpoint:${descMap.endpoint}, Cluster returned${descMap.value}"
+                    descMap.value.forEach{
+                        count = it.length()
+                        if (count == 2) {
+                            clustCon = "00"+it
+                        } else if (count == 3) {
+                            clustCon = "0"+it
+                        } else {
+                        }
+                        clusters.add(clustCon)
+                    }
+                    state.endpointlist.put(descMap.endpoint,clusters)
+                }
+                break
         case "0006" :
-            if (descMap.attrId == "0000") { //switch
-                sendSwitchEvent(descMap.value)
-            }
+            device = getChildDevice("${device.deviceNetworkId}-${CT_ENDPOINT}")
+            if (logEnable) log.debug "Parse(): Event to Child Light Device ${device}"
+            device.parse(descMap) 
             break
         case "0000" :
             if (descMap.attrId == "4000") { //software build
@@ -55,13 +83,9 @@ void parse(String description) {
             }
             break
         case '0008' :   // LevelControl
-            if (descMap.attrId == '0000') { //current level
-                sendLevelEvent(descMap.value)
-            }
-            else {
-                if (logEnable) log.debug "skipped level, attribute:${descMap.attrId}, value:${descMap.value}"
-            }
-//            gatherAttributesValuesInfo(descMap, LevelControlClusterAttributes)
+            device = getChildDevice("${device.deviceNetworkId}-${CT_ENDPOINT}")
+            if (logEnable) log.debug "Parse(): Event to Child Light Device ${device}"
+            device.parse(descMap) 
             break
         case "0202" :
             if (descMap.attrId == "0000") { //fan speed
@@ -92,21 +116,9 @@ void parse(String description) {
 //            gatherAttributesValuesInfo(descMap, FanClusterAttributes)
             break
         case '0300' :   // ColorControl
-            if (descMap.attrId == '0000') { //hue                
-                sendHueEvent(descMap.value)
-            } else if (descMap.attrId == '0001') { //saturation
-                sendSaturationEvent(descMap.value)
-            }
-            else if (descMap.attrId == '0007') { //color temperature
-                sendCTEvent(descMap.value)
-            }
-            else if (descMap.attrId == '0008') { //color mode
-                if (logEnable) log.debug "parse: skipped color mode:${descMap}"
-            }
-            else {
-                if (logEnable) log.debug "parse: skipped color, attribute:${descMap.attrId}, value:${descMap.value}"
-            }
-//            gatherAttributesValuesInfo(descMap, ColorControlClusterAttributes)
+            device = getChildDevice("${device.deviceNetworkId}-${CT_ENDPOINT}")
+            if (logEnable) log.debug "Parse(): Event to Child Light Device ${device}"
+            device.parse(descMap) 
             break
         case '0402' :   // Temp Sensor
             if (logEnable) log.debug "parse: Temp Sensor Information, attribute:${descMap.attrId}, value:${descMap.value}"
@@ -120,6 +132,7 @@ void parse(String description) {
             if (logEnable) {
                 log.debug "skipped:${descMap}"
             }
+        }
     }
 }
 
@@ -348,6 +361,8 @@ void updated(){
 
 void installed(){
     if (debugLog) {log.warn "installed(): Driver Installed"}
+    sendToDevice(getEndpoints())
+    sendToDevice(getClusters())
     addFanDeviceHelper()
     addLightDeviceHelper()
     addTempDeviceHelper()
@@ -361,6 +376,8 @@ void initialize() {
 //    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
 //    initializeVars(fullInit = true)
     sendToDevice(cleanSubscribeCmd())
+    sendToDevice(getEndpoints())
+    sendToDevice(getClusters())
 //    pauseExecution(5000)
 //    sendToDevice(subscribeCmd())
 //    childDNI = getChildDevices().deviceNetworkId
@@ -387,10 +404,30 @@ void refresh() {
     sendToDevice(refreshCmd())
 }
 
-String refreshCmd() {
+String getEndpoints() {
     List<Map<String, String>> attributePaths = []
     
         attributePaths.add(matter.attributePath(0x00, 0x001D, 0x0003))         // Descriptor to list endpoints
+    
+    String cmd = matter.readAttributes(attributePaths)
+    return cmd
+}
+
+String getClusters() {
+    List<Map<String, String>> attributePaths = []
+    
+    state.endpoints.forEach {
+        attributePaths.add(matter.attributePath(it, 0x001D, 0x0001))           // Descriptor to list cluster for a endpoint
+    }
+        
+    String cmd = matter.readAttributes(attributePaths)
+    return cmd
+}
+
+String refreshCmd() {
+    List<Map<String, String>> attributePaths = []
+    
+//        attributePaths.add(matter.attributePath(0x00, 0x001D, 0x0003))         // Descriptor to list endpoints
         attributePaths.add(matter.attributePath(0x01, 0x0006, 0x0000))         // on/off
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0000))         // FanMode
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0002))         // PercentSetting
@@ -464,12 +501,6 @@ String cleanSubscribeCmd() {
     attributePaths.add(matter.attributePath(0x01, 0x0406, 0x00))
     
     return matter.cleanSubscribe(0, 0xFFFF, attributePaths)
-}
-
-String getEndpoints() {
-    if (logEnable) log.debug "getEndpoints()"
-    String cmd = matter.getMatterEndpoints() 
-    return cmd
 }
 
 void logsOff(){
