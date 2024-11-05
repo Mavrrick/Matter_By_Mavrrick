@@ -195,6 +195,7 @@ private void sendSpeedEvent(String rawValue) {
     String descriptionText = "${device.displayName} was set to speed ${value}"
     if (txtEnable) log.info descriptionText
     device = getChildDevice("${device.deviceNetworkId}-${FAN_ENDPOINT}")
+    device.setPrevSpeed(intValue)
     if (logEnable) log.debug "sendSpeedEvent(): Sending Fan speed event to ${device}"
     device.sendEvent(name:"speed", value:value, descriptionText:descriptionText)
 }
@@ -332,7 +333,7 @@ private void sendCTEvent(String rawValue, Boolean presetColor = false) {
 void configure() {
     log.warn "configure..."
     sendToDevice(cleanSubscribeCmd())
-    sendToDevice(subscribeCmd())
+//    sendToDevice(subscribeCmd())
 //    sendToDevice(matter.getMatterEndpoints())
     unschedule()
 }
@@ -360,9 +361,9 @@ void initialize() {
 //    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
 //    initializeVars(fullInit = true)
     sendToDevice(cleanSubscribeCmd())
-    pauseExecution(5000)
-    sendToDevice(subscribeCmd())
-    childDNI = getChildDevices().deviceNetworkId
+//    pauseExecution(5000)
+//    sendToDevice(subscribeCmd())
+//    childDNI = getChildDevices().deviceNetworkId
 //    log.info "Initialize(): Child DNI's are ${childDNI}"
 /*    if (childDNI.contains("${device.deviceNetworkId}-${FAN_ENDPOINT}") == false) {
         addFanDeviceHelper()
@@ -389,6 +390,7 @@ void refresh() {
 String refreshCmd() {
     List<Map<String, String>> attributePaths = []
     
+        attributePaths.add(matter.attributePath(0x00, 0x001D, 0x0003))         // Descriptor to list endpoints
         attributePaths.add(matter.attributePath(0x01, 0x0006, 0x0000))         // on/off
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0000))         // FanMode
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0002))         // PercentSetting

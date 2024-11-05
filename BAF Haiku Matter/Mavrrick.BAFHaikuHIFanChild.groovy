@@ -130,19 +130,13 @@ void setSpeed(fanspeed) {
         attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0002, 0x04, speedValue ))
         String cmd = matter.writeAttributes(attributeWriteRequests)            
         parent.sendToDevice(cmd)
-        if (value > 0) {
-            state.previousSpeed = speedValue
-        }
     } else {
     speedValue = intToHexStr(value)  
     if (logEnable) log.debug "Setting Fan Speed percent ${fanspeed}  % ${value} value to ${speedValue}"
     List<Map<String, String>> attributeWriteRequests = []
     attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0002, 0x04, speedValue ))
     String cmd = matter.writeAttributes(attributeWriteRequests)            
-    parent.sendToDevice(cmd)
-        if (value > 0) {
-            state.previousSpeed = speedValue
-        }    
+    parent.sendToDevice(cmd)   
     }
 }
 
@@ -193,7 +187,11 @@ void whoosh(action) {
     parent.sendToDevice(cmd)
 }
 
-
+void setPrevSpeed(Integer value) {
+            if (value > 0) {
+            state.previousSpeed = value
+        }
+}
 
 void configure() {
     log.warn "configure..."
