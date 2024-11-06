@@ -397,22 +397,22 @@ void initialize() {
     if (childDNI.contains("${device.deviceNetworkId}-${FAN_ENDPOINT}") == false) {
         addFanDeviceHelper()
     }
-    log.info "Initialize(): Calculated fan DNI is: "+"${device.deviceNetworkId}-${CT_ENDPOINT}"
+    log.info "Initialize(): Calculated CT DNI is: "+"${device.deviceNetworkId}-${CT_ENDPOINT}"
     if (childDNI.contains("${device.deviceNetworkId}-${CT_ENDPOINT}") == false) {
         addLightDeviceHelper()
     }
-    log.info "Initialize(): Calculated fan DNI is: "+"${device.deviceNetworkId}-${TEMP_ENDPOINT}"
+    log.info "Initialize(): Calculated Temperature DNI is: "+"${device.deviceNetworkId}-${TEMP_ENDPOINT}"
     tempDNI = "${device.deviceNetworkId}-${TEMP_ENDPOINT}"
     if (childDNI.contains(tempDNI) == false) {
         addTempDeviceHelper()
     }
-    log.info "Initialize(): Calculated fan DNI is: "+"${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}"
+    log.info "Initialize(): Calculated Occupancy DNI is: "+"${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}"
     occDNI = "${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}"
     if (childDNI.contains(occDNI) == false) {
         addOccupyDeviceHelper()
     } 
 //sendToDevice(getEndpoints())
-    List<Map<String,String>> endpoints = matter.getMatterEndpoints()
+//    List<Map<String,String>> endpoints = matter.getMatterEndpoints()
     if (logEnable) log.debug "initialize() Endpoints are ${endpoints}"
 }
 
