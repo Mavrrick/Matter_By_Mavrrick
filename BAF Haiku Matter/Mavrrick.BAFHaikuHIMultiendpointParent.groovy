@@ -57,17 +57,21 @@ void parse(String description) {
             case "001D" :
                 if (descMap.attrId == "0001") { //list Clusters for endpoint
 //                    state.endpointlist = [:]
-                    List clusters = []
+                    List clusters = []                    
                     if (logEnable) log.debug "parse(): Cluster data found Endpoint:${descMap.endpoint}, Cluster returned${descMap.value}"
                     descMap.value.forEach{
                         count = it.length()
+                        if (logEnable) log.debug "parse(): Processing cluster ${it} has length of ${it.length()} calculated to ${count}"
                         if (count == 2) {
                             clustCon = "00"+it
+                            if (logEnable) log.debug "parse(): Processed as a length of 2 adding to ${clustCon}"
                         } else if (count == 3) {
                             clustCon = "0"+it
+                            if (logEnable) log.debug "parse(): Processed as a length of 2 adding to ${clustCon}"
                         } else {
                         }
                         clusters.add(clustCon)
+                        if (logEnable) log.debug "parse(): Processed as a length of 2 adding to ${clusters}"
                     }
                     atomicState.endpointlist.put(descMap.endpoint,clusters)
                 }
@@ -389,16 +393,22 @@ void initialize() {
 //    sendToDevice(subscribeCmd())
     childDNI = getChildDevices().deviceNetworkId
     log.info "Initialize(): Child DNI's are ${childDNI}"
+    log.info "Initialize(): Calculated fan DNI is: "+"${device.deviceNetworkId}-${FAN_ENDPOINT}"
     if (childDNI.contains("${device.deviceNetworkId}-${FAN_ENDPOINT}") == false) {
         addFanDeviceHelper()
     }
+    log.info "Initialize(): Calculated fan DNI is: "+"${device.deviceNetworkId}-${CT_ENDPOINT}"
     if (childDNI.contains("${device.deviceNetworkId}-${CT_ENDPOINT}") == false) {
         addLightDeviceHelper()
     }
-    if (childDNI.contains("${device.deviceNetworkId}-${TEMP_ENDPOINT}") == false) {
+    log.info "Initialize(): Calculated fan DNI is: "+"${device.deviceNetworkId}-${TEMP_ENDPOINT}"
+    tempDNI = "${device.deviceNetworkId}-${TEMP_ENDPOINT}"
+    if (childDNI.contains(tempDNI) == false) {
         addTempDeviceHelper()
     }
-    if (childDNI.contains("${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}") == false) {
+    log.info "Initialize(): Calculated fan DNI is: "+"${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}"
+    occDNI = "${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}"
+    if (childDNI.contains(occDNI) == false) {
         addOccupyDeviceHelper()
     } 
 //sendToDevice(getEndpoints())
