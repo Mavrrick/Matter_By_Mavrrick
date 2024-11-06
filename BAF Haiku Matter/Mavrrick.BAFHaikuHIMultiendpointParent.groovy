@@ -47,7 +47,7 @@ void parse(String description) {
         switch (descMap.cluster) {
             case "001D" :
                 if (descMap.attrId == "0003") { //Endpoint list
-                    atomic.state.endpoints = descMap.value
+                    state.endpoints = descMap.value
                     if (logEnable) log.debug "parse(): Endpoints found on device ${descMap.value}"
                 }
             break
@@ -69,7 +69,7 @@ void parse(String description) {
                         }
                         clusters.add(clustCon)
                     }
-                    atomic.state.endpointlist.put(descMap.endpoint,clusters)
+                    state.endpointlist.put(descMap.endpoint,clusters)
                 }
                 break
         case "0006" :
