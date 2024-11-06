@@ -47,7 +47,7 @@ void parse(String description) {
         switch (descMap.cluster) {
             case "001D" :
                 if (descMap.attrId == "0003") { //Endpoint list
-                    state.endpoints = descMap.value
+                    atomicState.endpoints = descMap.value
                     if (logEnable) log.debug "parse(): Endpoints found on device ${descMap.value}"
                 }
             break
@@ -69,7 +69,7 @@ void parse(String description) {
                         }
                         clusters.add(clustCon)
                     }
-                    state.endpointlist.put(descMap.endpoint,clusters)
+                    atomicState.endpointlist.put(descMap.endpoint,clusters)
                 }
                 break
         case "0006" :
@@ -386,9 +386,9 @@ void initialize() {
     
 //    pauseExecution(5000)
 //    sendToDevice(subscribeCmd())
-//    childDNI = getChildDevices().deviceNetworkId
-//    log.info "Initialize(): Child DNI's are ${childDNI}"
-/*    if (childDNI.contains("${device.deviceNetworkId}-${FAN_ENDPOINT}") == false) {
+    childDNI = getChildDevices().deviceNetworkId
+    log.info "Initialize(): Child DNI's are ${childDNI}"
+    if (childDNI.contains("${device.deviceNetworkId}-${FAN_ENDPOINT}") == false) {
         addFanDeviceHelper()
     }
     if (childDNI.contains("${device.deviceNetworkId}-${CT_ENDPOINT}") == false) {
@@ -399,7 +399,7 @@ void initialize() {
     }
     if (childDNI.contains("${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}") == false) {
         addOccupyDeviceHelper()
-    } */
+    } 
 //sendToDevice(getEndpoints())
     List<Map<String,String>> endpoints = matter.getMatterEndpoints()
     if (logEnable) log.debug "initialize() Endpoints are ${endpoints}"
