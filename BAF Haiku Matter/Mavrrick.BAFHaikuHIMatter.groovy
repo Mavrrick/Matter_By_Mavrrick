@@ -76,9 +76,38 @@ metadata {
 
 //parsers
 void parse(String description) {
+    if (logEnable) log.debug "descMap:${description}"
     Map descMap = matter.parseDescriptionAsMap(description)
     if (logEnable) log.debug "descMap:${descMap}"
-    switch (descMap.cluster) {        
+    if (descMap.endpoint == "00") {
+        switch (descMap.cluster) {
+            case "001D" :
+                if (descMap.attrId == "0003") { //Endpoint list
+                    atomic.state.endpoints = descMap.value
+                    if (logEnable) log.debug "parse(): Endpoints found on device ${descMap.value}"
+                }
+            break
+        }
+    } else {  
+    switch (descMap.cluster) {
+        case "001D" :
+                if (descMap.attrId == "0001") { //list Clusters for endpoint
+                    state.endpointlist = [:]
+                    List clusters = []
+                    if (logEnable) log.debug "parse(): Cluster data found Endpoint:${descMap.endpoint}, Cluster returned${descMap.value}"
+                    descMap.value.forEach{
+                        count = it.length()
+                        if (count == 2) {
+                            clustCon = "00"+it
+                        } else if (count == 3) {
+                            clustCon = "0"+it
+                        } else {
+                        }
+                        clusters.add(clustCon)
+                    }
+                    atomic.state.endpointlist.put(descMap.endpoint,clusters)
+                }
+                break
         case "0006" :
             if (descMap.attrId == "0000") { //switch
                 sendSwitchEvent(descMap.value)
@@ -155,6 +184,7 @@ void parse(String description) {
             if (logEnable) {
                 log.debug "skipped:${descMap}"
             }
+        }
     }
 }
 
@@ -510,7 +540,7 @@ void startLevelChange(direction) {
     List<Map<String, String>> cmdFields = []
     cmdFields.add(matter.cmdField(0x04, 0x00, dirValue))
     cmdFields.add(matter.cmdField(0x04, 0x01, rateValue))
-    cmds = matter.invoke(0x02, 0x0008, 0x0001, cmdFields)            
+    cmds = matter.invoke(0x02, 0x0008, 0x0005, cmdFields)            
     sendToDevice(cmds)
 }
 
@@ -520,8 +550,7 @@ void stopLevelChange() {
     if (logEnable) log.debug "Sending command to change in ${direction} with value ${action}"
     
     List<Map<String, String>> cmdFields = []
-//    cmdFields.add(matter.cmdField(0x04, 0x00, dirValue))
-    cmds = matter.invoke(0x02, 0x0008, 0x0003)            
+    cmds = matter.invoke(device.getDataValue("endpointId"), 0x0008, 0x0007)            
     sendToDevice(cmds)
 }
 
@@ -670,7 +699,7 @@ void configure() {
     log.warn "configure..."
     sendToDevice(cleanSubscribeCmd())
     sendToDevice(subscribeCmd())
-//    sendToDevice(matter.getMatterEndpoints())
+
     unschedule()
 }
 
@@ -682,17 +711,45 @@ void updated(){
     if (logEnable) runIn(1800,logsOff)
 }
 
+void installed(){
+    if (debugLog) {log.warn "installed(): Driver Installed"}
+    initialize()
+}
+
 void initialize() {
     log.info "initialize..."
     sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
 //    initializeVars(fullInit = true)
+    sendToDevice(getEndpoints())
+    pauseExecution(1000)
+    sendToDevice(getClusters())
     sendToDevice(cleanSubscribeCmd())
-    sendToDevice(subscribeCmd())
+//    sendToDevice(subscribeCmd())
 }
 
 void refresh() {
     if (logEnable) log.debug "refresh()"
     sendToDevice(refreshCmd())
+}
+
+String getEndpoints() {
+    List<Map<String, String>> attributePaths = []
+    
+        attributePaths.add(matter.attributePath(0x00, 0x001D, 0x0003))         // Descriptor to list endpoints
+    
+    String cmd = matter.readAttributes(attributePaths)
+    return cmd
+}
+
+String getClusters() {
+    List<Map<String, String>> attributePaths = []
+    
+    state.endpoints.forEach {
+        attributePaths.add(matter.attributePath(it, 0x001D, 0x0001))           // Descriptor to list cluster for a endpoint
+    }
+        
+    String cmd = matter.readAttributes(attributePaths)
+    return cmd
 }
 
 String refreshCmd() {
@@ -731,16 +788,16 @@ String subscribeCmd() {
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x03))
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0A))
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0B))
-        attributePaths.add(matter.attributePath(0x01, 0x0005, 0x01))
-        attributePaths.add(matter.attributePath(0x01, 0x0006, 0x00))
-        attributePaths.add(matter.attributePath(0x01, 0x0008, 0x00))
-        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x00))
-        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x01))
-        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x07))
+        attributePaths.add(matter.attributePath(0x02, 0x0005, 0x01))
+        attributePaths.add(matter.attributePath(0x02, 0x0006, 0x00))
+        attributePaths.add(matter.attributePath(0x02, 0x0008, 0x00))
+        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x00))
+        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x01))
+        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x07))
 //        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x08))
     
-        attributePaths.add(matter.attributePath(0x01, 0x0402, 0x00))
-        attributePaths.add(matter.attributePath(0x01, 0x0406, 0x00))
+        attributePaths.add(matter.attributePath(0x04, 0x0402, 0x00))
+        attributePaths.add(matter.attributePath(0x06, 0x0406, 0x00))
     
         cmd = matter.subscribe(0, 0xFFFF, attributePaths)
 
@@ -759,16 +816,16 @@ String cleanSubscribeCmd() {
     attributePaths.add(matter.attributePath(0x01, 0x0202, 0x03))
     attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0A))
     attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0B))
-    attributePaths.add(matter.attributePath(0x01, 0x0005, 0x01))
-    attributePaths.add(matter.attributePath(0x01, 0x0006, 0x00))
-    attributePaths.add(matter.attributePath(0x01, 0x0008, 0x00))
-    attributePaths.add(matter.attributePath(0x01, 0x0300, 0x00))
-    attributePaths.add(matter.attributePath(0x01, 0x0300, 0x01))
-    attributePaths.add(matter.attributePath(0x01, 0x0300, 0x07))
+    attributePaths.add(matter.attributePath(0x02, 0x0005, 0x01))
+    attributePaths.add(matter.attributePath(0x02, 0x0006, 0x00))
+    attributePaths.add(matter.attributePath(0x02, 0x0008, 0x00))
+    attributePaths.add(matter.attributePath(0x02, 0x0300, 0x00))
+    attributePaths.add(matter.attributePath(0x02, 0x0300, 0x01))
+    attributePaths.add(matter.attributePath(0x02, 0x0300, 0x07))
 //        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x08))
     
-    attributePaths.add(matter.attributePath(0x01, 0x0402, 0x00))
-    attributePaths.add(matter.attributePath(0x01, 0x0406, 0x00))
+    attributePaths.add(matter.attributePath(0x04, 0x0402, 0x00))
+    attributePaths.add(matter.attributePath(0x06, 0x0406, 0x00))
     
     return matter.cleanSubscribe(0, 0xFFFF, attributePaths)
 }
