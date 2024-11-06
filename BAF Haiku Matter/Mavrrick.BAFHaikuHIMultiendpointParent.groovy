@@ -56,7 +56,7 @@ void parse(String description) {
         switch (descMap.cluster) {
             case "001D" :
                 if (descMap.attrId == "0001") { //list Clusters for endpoint
-                    state.endpointlist = [:]
+//                    state.endpointlist = [:]
                     List clusters = []
                     if (logEnable) log.debug "parse(): Cluster data found Endpoint:${descMap.endpoint}, Cluster returned${descMap.value}"
                     descMap.value.forEach{
@@ -361,6 +361,7 @@ void updated(){
 
 void installed(){
     if (debugLog) {log.warn "installed(): Driver Installed"}
+    state.endpointlist = [:]
     sendToDevice(getEndpoints())
     pauseExecution(3000)
     sendToDevice(getClusters())
