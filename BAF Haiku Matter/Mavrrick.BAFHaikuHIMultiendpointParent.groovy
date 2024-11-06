@@ -47,7 +47,7 @@ void parse(String description) {
         switch (descMap.cluster) {
             case "001D" :
                 if (descMap.attrId == "0003") { //Endpoint list
-                    state.endpoints = descMap.value
+                    atomic.state.endpoints = descMap.value
                     if (logEnable) log.debug "parse(): Endpoints found on device ${descMap.value}"
                 }
             break
@@ -69,7 +69,7 @@ void parse(String description) {
                         }
                         clusters.add(clustCon)
                     }
-                    state.endpointlist.put(descMap.endpoint,clusters)
+                    atomic.state.endpointlist.put(descMap.endpoint,clusters)
                 }
                 break
         case "0006" :
@@ -362,6 +362,7 @@ void updated(){
 void installed(){
     if (debugLog) {log.warn "installed(): Driver Installed"}
     sendToDevice(getEndpoints())
+    pauseExecution(3000)
     sendToDevice(getClusters())
     addFanDeviceHelper()
     addLightDeviceHelper()
@@ -375,9 +376,14 @@ void initialize() {
     log.info "initialize..."
 //    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
 //    initializeVars(fullInit = true)
-    sendToDevice(cleanSubscribeCmd())
+
     sendToDevice(getEndpoints())
+    pauseExecution(1000)
     sendToDevice(getClusters())
+//    pauseExecution(1000)
+    log.info "Initialize(): Initiated clean Subscribe"
+    sendToDevice(cleanSubscribeCmd())
+    
 //    pauseExecution(5000)
 //    sendToDevice(subscribeCmd())
 //    childDNI = getChildDevices().deviceNetworkId
@@ -428,7 +434,6 @@ String refreshCmd() {
     List<Map<String, String>> attributePaths = []
     
 //        attributePaths.add(matter.attributePath(0x00, 0x001D, 0x0003))         // Descriptor to list endpoints
-        attributePaths.add(matter.attributePath(0x01, 0x0006, 0x0000))         // on/off
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0000))         // FanMode
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0002))         // PercentSetting
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0003))         // PercentCurrent
@@ -455,22 +460,21 @@ String subscribeCmd() {
     List<Map<String, String>> attributePaths = []
     String cmd = ''
     
-        attributePaths.add(matter.attributePath(0x01, 0x0006, 0x00))
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x00))
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x02))
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x03))
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0A))
         attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0B))
-        attributePaths.add(matter.attributePath(0x01, 0x0005, 0x01))
-        attributePaths.add(matter.attributePath(0x01, 0x0006, 0x00))
-        attributePaths.add(matter.attributePath(0x01, 0x0008, 0x00))
-        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x00))
-        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x01))
-        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x07))
+        attributePaths.add(matter.attributePath(0x02, 0x0005, 0x01))
+        attributePaths.add(matter.attributePath(0x02, 0x0006, 0x00))
+        attributePaths.add(matter.attributePath(0x02, 0x0008, 0x00))
+        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x00))
+        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x01))
+        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x07))
 //        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x08))
     
-        attributePaths.add(matter.attributePath(0x01, 0x0402, 0x00))
-        attributePaths.add(matter.attributePath(0x01, 0x0406, 0x00))
+        attributePaths.add(matter.attributePath(0x04, 0x0402, 0x00))
+        attributePaths.add(matter.attributePath(0x06, 0x0406, 0x00))
     
         cmd = matter.subscribe(0, 0xFFFF, attributePaths)
 
@@ -483,22 +487,21 @@ String cleanSubscribeCmd() {
     
    String cmd = ''
     
-    attributePaths.add(matter.attributePath(0x01, 0x0006, 0x00))
     attributePaths.add(matter.attributePath(0x01, 0x0202, 0x00))
     attributePaths.add(matter.attributePath(0x01, 0x0202, 0x02))
     attributePaths.add(matter.attributePath(0x01, 0x0202, 0x03))
     attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0A))
     attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0B))
-    attributePaths.add(matter.attributePath(0x01, 0x0005, 0x01))
-    attributePaths.add(matter.attributePath(0x01, 0x0006, 0x00))
-    attributePaths.add(matter.attributePath(0x01, 0x0008, 0x00))
-    attributePaths.add(matter.attributePath(0x01, 0x0300, 0x00))
-    attributePaths.add(matter.attributePath(0x01, 0x0300, 0x01))
-    attributePaths.add(matter.attributePath(0x01, 0x0300, 0x07))
+    attributePaths.add(matter.attributePath(0x02, 0x0005, 0x01))
+    attributePaths.add(matter.attributePath(0x02, 0x0006, 0x00))
+    attributePaths.add(matter.attributePath(0x02, 0x0008, 0x00))
+    attributePaths.add(matter.attributePath(0x02, 0x0300, 0x00))
+    attributePaths.add(matter.attributePath(0x02, 0x0300, 0x01))
+    attributePaths.add(matter.attributePath(0x02, 0x0300, 0x07))
 //        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x08))
     
-    attributePaths.add(matter.attributePath(0x01, 0x0402, 0x00))
-    attributePaths.add(matter.attributePath(0x01, 0x0406, 0x00))
+    attributePaths.add(matter.attributePath(0x04, 0x0402, 0x00))
+    attributePaths.add(matter.attributePath(0x06, 0x0406, 0x00))
     
     return matter.cleanSubscribe(0, 0xFFFF, attributePaths)
 }
