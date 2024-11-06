@@ -67,12 +67,14 @@ void parse(String description) {
                             if (logEnable) log.debug "parse(): Processed as a length of 2 adding to ${clustCon}"
                         } else if (count == 3) {
                             clustCon = "0"+it
-                            if (logEnable) log.debug "parse(): Processed as a length of 2 adding to ${clustCon}"
+                            if (logEnable) log.debug "parse(): Processed as a length of 3 adding to ${clustCon}"
                         } else {
+                            clustCon = it
                         }
                         clusters.add(clustCon)
-                        if (logEnable) log.debug "parse(): Processed as a length of 2 adding to ${clusters}"
+                        if (logEnable) log.debug "parse(): Records to add to cluster list state value are ${clusters}"
                     }
+                    if (logEnable) log.debug "parse(): Adding data for Endpoint ${descMap.endpoint} with cluster ${clusters}"
                     atomicState.endpointlist.put(descMap.endpoint,clusters)
                 }
                 break
@@ -366,6 +368,7 @@ void updated(){
 void installed(){
     if (debugLog) {log.warn "installed(): Driver Installed"}
     state.endpointlist = [:]
+    state.endpoints = [:]
     sendToDevice(getEndpoints())
     pauseExecution(3000)
     sendToDevice(getClusters())
@@ -381,7 +384,8 @@ void initialize() {
     log.info "initialize..."
 //    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
 //    initializeVars(fullInit = true)
-
+    state.endpointlist = [:]
+    state.endpoints = [:]
     sendToDevice(getEndpoints())
     pauseExecution(1000)
     sendToDevice(getClusters())
@@ -391,7 +395,7 @@ void initialize() {
     
 //    pauseExecution(5000)
 //    sendToDevice(subscribeCmd())
-    childDNI = getChildDevices().deviceNetworkId
+    List childDNI = getChildDevices().deviceNetworkId
     log.info "Initialize(): Child DNI's are ${childDNI}"
     log.info "Initialize(): Calculated fan DNI is: "+"${device.deviceNetworkId}-${FAN_ENDPOINT}"
     if (childDNI.contains("${device.deviceNetworkId}-${FAN_ENDPOINT}") == false) {
