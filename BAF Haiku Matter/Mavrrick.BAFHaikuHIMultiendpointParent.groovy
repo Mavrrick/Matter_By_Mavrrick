@@ -217,7 +217,7 @@ private void sendSpeedEvent(String rawValue) {
             value = "speed 7";
         break;
         default:
-            value = "Auto Speed"+intValue
+            value = "Auto Speed "+intValue
     }
     
     String descriptionText = "${device.displayName} was set to speed ${value}"
