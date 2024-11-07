@@ -187,10 +187,11 @@ void whoosh(action) {
     parent.sendToDevice(cmd)
 }
 
-void setPrevSpeed(Integer value) {
-            if (value > 0) {
-            state.previousSpeed = value
-        }
+void setPrevSpeed(String value) {
+    if (value != '00') {
+        if (logEnable) log.debug "Recieved Speed setting from parent ${value}"       
+        state.previousSpeed = value
+    }
 }
 
 void configure() {
