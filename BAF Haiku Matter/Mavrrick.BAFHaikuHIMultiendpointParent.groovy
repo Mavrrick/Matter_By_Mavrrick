@@ -47,7 +47,7 @@ void parse(String description) {
         switch (descMap.cluster) {
             case "001D" :
                 if (descMap.attrId == "0003") { //Endpoint list
-                    atomicState.endpoints = descMap.value
+                    state.endpoints = descMap.value
                     if (logEnable) log.debug "parse(): Endpoints found on device ${descMap.value}"
                 }
             break
@@ -75,7 +75,14 @@ void parse(String description) {
                         if (logEnable) log.debug "parse(): Records to add to cluster list state value are ${clusters}"
                     }
                     if (logEnable) log.debug "parse(): Adding data for Endpoint ${descMap.endpoint} with cluster ${clusters}"
-                    atomicState.endpointlist.put(descMap.endpoint,clusters)
+                    if (state.endpointlist == null) {
+                        if (logEnable) log.debug "parse(): Endpoint list value is Null"
+                        state.endpointlist = [:]
+                        state.endpointlist.put(descMap.endpoint,clusters)
+                    } else {    
+                        if (logEnable) log.debug "parse(): Endpoint list value is not Null"
+                        state.endpointlist.put(descMap.endpoint,clusters)
+                    }
                 }
                 break
         case "0006" :
@@ -367,8 +374,8 @@ void updated(){
 
 void installed(){
     if (debugLog) {log.warn "installed(): Driver Installed"}
-    state.endpointlist = [:]
-    state.endpoints = [:]
+//    state.endpointlist = [:]
+//    state.endpoints = [:]
     sendToDevice(getEndpoints())
     pauseExecution(3000)
     sendToDevice(getClusters())
@@ -384,8 +391,8 @@ void initialize() {
     log.info "initialize..."
 //    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
 //    initializeVars(fullInit = true)
-    state.endpointlist = [:]
-    state.endpoints = [:]
+//    state.endpointlist = [:]
+//    state.endpoints = [:]
     sendToDevice(getEndpoints())
     pauseExecution(1000)
     sendToDevice(getClusters())
