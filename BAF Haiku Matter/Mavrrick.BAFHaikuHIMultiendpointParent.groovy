@@ -413,12 +413,12 @@ void initialize() {
         addLightDeviceHelper()
     }
     log.info "Initialize(): Calculated Temperature DNI is: "+"${device.deviceNetworkId}-${TEMP_ENDPOINT}"
-    tempDNI = "${device.deviceNetworkId}-${TEMP_ENDPOINT}"
+    def tempDNI = device.deviceNetworkId+'-'+TEMP_ENDPOINT
     if (childDNI.contains(tempDNI) == false) {
         addTempDeviceHelper()
     }
     log.info "Initialize(): Calculated Occupancy DNI is: "+"${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}"
-    occDNI = "${device.deviceNetworkId}-${OCCUPANCY_ENDPOINT}"
+    def String occDNI = device.deviceNetworkId+'-'+OCCUPANCY_ENDPOINT
     if (childDNI.contains(occDNI) == false) {
         addOccupyDeviceHelper()
     } 
