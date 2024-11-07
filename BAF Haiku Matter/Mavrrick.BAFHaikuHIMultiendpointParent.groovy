@@ -221,7 +221,7 @@ private void sendSpeedEvent(String rawValue) {
     String descriptionText = "${device.displayName} was set to speed ${value}"
     if (txtEnable) log.info descriptionText
     device = getChildDevice("${device.deviceNetworkId}-${FAN_ENDPOINT}")
-    device.setPrevSpeed(intValue)
+    device.setPrevSpeed(rawValue)
     if (logEnable) log.debug "sendSpeedEvent(): Sending Fan speed event to ${device}"
     device.sendEvent(name:"speed", value:value, descriptionText:descriptionText)
 }
