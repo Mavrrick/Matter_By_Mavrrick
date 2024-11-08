@@ -150,11 +150,7 @@ private void sendSwitchEvent(String rawValue) {
 }
 
 private void sendLevelEvent(String rawValue) {
-    if ( rawValue == "01" || rawValue == "02") {
-        Integer value = 1
-    } else {
-        Integer value = Math.round(hexStrToUnsignedInt(rawValue) / 2.55)
-    }
+    Integer value = Math.round(hexStrToUnsignedInt(rawValue) / 2.55)
     if (value == 0 || value == device.currentValue("level")) return
     String descriptionText = "${device.displayName} level was set to ${value}%"
     if (txtEnable) log.info descriptionText
