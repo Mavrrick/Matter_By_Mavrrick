@@ -150,7 +150,7 @@ private void sendSwitchEvent(String rawValue) {
 }
 
 private void sendLevelEvent(String rawValue) {
-    if ( hexStrToUnsignedInt(rawValue) >= 1 && hexStrToUnsignedInt(rawValue) <=2) {
+    if ( rawValue == "01" || rawValue == "02") {
         Integer value = 1
     } else {
         Integer value = Math.round(hexStrToUnsignedInt(rawValue) / 2.55)
