@@ -171,13 +171,7 @@ private void sendFanModeEvent(String rawValue) {
         break;
         case 5:
             value = "Auto";
-        break;
-        case 84:
-            value = "speed 6";
-        break;
-        case 100:
-            value = "speed 7";
-        break; 
+        break
     }
     
 //    if (device.currentValue("switch") == value) return
@@ -222,7 +216,7 @@ private void sendSpeedEvent(String rawValue) {
     
     String descriptionText = "${device.displayName} was set to speed ${value}"
     if (txtEnable) log.info descriptionText
-    device = getChildDevice("${device.deviceNetworkId}-${FAN_ENDPOINT}")
+    device = getChildDevice("${device.deviceNetworkId}-${FAN_ENDPOINT}") 
     device.setPrevSpeed(rawValue)
     if (logEnable) log.debug "sendSpeedEvent(): Sending Fan speed event to ${device}"
     device.sendEvent(name:"speed", value:value, descriptionText:descriptionText)
@@ -368,8 +362,6 @@ private void sendCTEvent(String rawValue, Boolean presetColor = false) {
 void configure() {
     log.warn "configure..."
     sendToDevice(cleanSubscribeCmd())
-//    sendToDevice(subscribeCmd())
-//    sendToDevice(matter.getMatterEndpoints())
     unschedule()
 }
 
@@ -383,8 +375,6 @@ void updated(){
 
 void installed(){
     if (debugLog) {log.warn "installed(): Driver Installed"}
-//    state.endpointlist = [:]
-//    state.endpoints = [:]
     sendToDevice(getEndpoints())
     pauseExecution(3000)
     sendToDevice(getClusters())
@@ -398,19 +388,12 @@ void installed(){
 
 void initialize() {
     log.info "initialize..."
-//    sendEvent(name: "supportedFanSpeeds", value: groovy.json.JsonOutput.toJson(getFanLevel.collect {k,v -> k}))    
-//    initializeVars(fullInit = true)
-//    state.endpointlist = [:]
-//    state.endpoints = [:]
     sendToDevice(getEndpoints())
     pauseExecution(1000)
     sendToDevice(getClusters())
-//    pauseExecution(1000)
+
     log.info "Initialize(): Initiated clean Subscribe"
     sendToDevice(cleanSubscribeCmd())
-    
-//    pauseExecution(5000)
-//    sendToDevice(subscribeCmd())
     List childDNI = getChildDevices().deviceNetworkId
     log.info "Initialize(): Child DNI's are ${childDNI}"
     log.info "Initialize(): Calculated fan DNI is: "+"${device.deviceNetworkId}-${FAN_ENDPOINT}"
@@ -431,8 +414,6 @@ void initialize() {
     if (childDNI.contains(occDNI) == false) {
         addOccupyDeviceHelper()
     } 
-//sendToDevice(getEndpoints())
-//    List<Map<String,String>> endpoints = matter.getMatterEndpoints()
     if (logEnable) log.debug "initialize() Endpoints are ${endpoints}"
 }
 

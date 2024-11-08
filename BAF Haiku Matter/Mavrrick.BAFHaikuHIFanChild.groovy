@@ -188,9 +188,15 @@ void whoosh(action) {
 }
 
 void setPrevSpeed(String value) {
+    if (logEnable) log.debug "Recieved Speed setting from parent ${value}"
     if (value != '00') {
-        if (logEnable) log.debug "Recieved Speed setting from parent ${value}"       
-        state.previousSpeed = value
+        if (logEnable) log.debug "Speed recieved is greater then 0"
+        if (device.currentValue("Fan_Mode") == "Auto") {
+            if (logEnable) log.debug "Ignoring new speed, fan is in Auto Mode"    
+        } else {
+            if (logEnable) log.debug "Storing ${value} as previous speed"
+            state.previousSpeed = value
+        }
     }
 }
 
