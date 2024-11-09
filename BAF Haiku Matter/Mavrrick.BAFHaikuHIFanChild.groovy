@@ -45,11 +45,13 @@ metadata {
         capability "Switch"        
         capability "Configuration"
         capability "FanControl"
+        capability "ChangeLevel"
         capability "Initialize"
         capability "Refresh"
         
         command "setSpeed", [[name: "Fan speed*",type:"ENUM", description:"Fan speed to set", constraints: getFanLevel.collect {k,v -> k}]]
         command "airDirection", [[name: "Air Direction*",type:"ENUM", description:"Direction fan is moving", constraints: airDirection]]
+        command "setLevel", [[name: "Speed %*",type:"INTEGER", description:"Percent of speed fan will run at"]]
         command "fanAuto"
         command "whoosh", [[name: "Whoosh Mode*",type:"ENUM", description:"Whoosh Mode on/off", constraints: whooshOptions]]
         
@@ -138,6 +140,16 @@ void setSpeed(fanspeed) {
     String cmd = matter.writeAttributes(attributeWriteRequests)            
     parent.sendToDevice(cmd)   
     }
+}
+
+void setLevel(Integer value) { //new set level to assign fan speed
+    if (logEnable) log.debug "setLevel(${value})"
+    speedValue = intToHexStr(value)  
+    if (logEnable) log.debug "Setting Fan Speed percento ${speedValue}"
+    List<Map<String, String>> attributeWriteRequests = []
+    attributeWriteRequests.add(matter.attributeWriteRequest(device.getDataValue("endpointId"), 0x0202, 0x0002, 0x04, speedValue ))
+    String cmd = matter.writeAttributes(attributeWriteRequests)
+    parent.sendToDevice(cmd)
 }
 
 void airDirection(direction) {
