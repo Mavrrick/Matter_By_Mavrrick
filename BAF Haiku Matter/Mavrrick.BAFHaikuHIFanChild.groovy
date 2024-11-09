@@ -142,7 +142,7 @@ void setSpeed(fanspeed) {
     }
 }
 
-void setLevel(Integer value) { //new set level to assign fan speed
+void setLevel(Integer value, Object rate=0) { //new set level to assign fan speed
     if (logEnable) log.debug "setLevel(${value})"
     speedValue = intToHexStr(value)  
     if (logEnable) log.debug "Setting Fan Speed percento ${speedValue}"
