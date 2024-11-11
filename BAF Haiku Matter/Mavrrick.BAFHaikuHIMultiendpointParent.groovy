@@ -211,7 +211,7 @@ private void sendSpeedEvent(String rawValue) {
             value = "speed 7";
         break;
         default:
-            value = "Auto Speed "+intValue
+            value = "N/A"
     }
     
     String descriptionText = "${device.displayName} was set to speed ${value}"
@@ -220,6 +220,7 @@ private void sendSpeedEvent(String rawValue) {
     device.setPrevSpeed(rawValue)
     if (logEnable) log.debug "sendSpeedEvent(): Sending Fan speed event to ${device}"
     device.sendEvent(name:"speed", value:value, descriptionText:descriptionText)
+    device.sendEvent(name:"level", value:intValue, descriptionText:descriptionText)
     if (intValue == 0) {
         String descriptionTextoff = "${device.displayName} was turned off"
         device.sendEvent(name:"switch", value:"off", descriptionText:descriptionTextoff)
