@@ -18,13 +18,13 @@ import groovy.transform.Field
 
 @Field Map getFanLevel = [
     "off": 0
-    ,"speed 1 1%": 1
-	,"speed 2 18%": 18
-	,"speed 3 34%": 34
-    ,"speed 4 51%": 51
-	,"speed 5 67%": 67
-	,"speed 6 84%": 84    
-    ,"speed 7 100%": 100    
+    ,"speed 1": 1
+	,"speed 2": 18
+	,"speed 3": 34
+    ,"speed 4": 51
+	,"speed 5": 67
+	,"speed 6": 84    
+    ,"speed 7": 100    
 ]
 
 @Field Map airDirection = [
@@ -96,28 +96,29 @@ void setSpeed(fanspeed) {
         case "off":
             value = 0;
         break;
-        case "speed 1 1%":
+        case "speed 1":
+        case "low":
             value = 1;
         break;
-        case "speed 2 18%":
+        case "speed 2":
             value = 18;
         break;
-        case "speed 3 34%":
+        case "speed 3":
         case "medium-low":
             value = 34;
         break;
-        case "speed 4 51%":
+        case "speed 4":
         case "medium":
             value = 51;
         break;
-        case "speed 5 67%":
+        case "speed 5":
         case "medium-high":
             value = 67;
         break;
-        case "speed 6 84%":
+        case "speed 6":
             value = 84;
         break;
-        case "speed 7 100%":
+        case "speed 7":
         case "high":
             value = 100;
         break; 
