@@ -185,33 +185,30 @@ private void sendFanModeEvent(String rawValue) {
 private void sendSpeedEvent(String rawValue) { 
     Integer intValue = hexStrToUnsignedInt(rawValue) 
     
-    switch(intValue) {
-        case 0 :
-            value = "off";
-        break;
-        case 1:
-            value = "speed 1";
-        break;
-        case 18:
-            value = "speed 2";
-        break;
-        case 34:
-            value = "speed 3";
-        break;
-        case 51:
-            value = "speed 4";
-        break;
-        case 67:
-            value = "speed 5";
-        break;
-        case 84:
-            value = "speed 6";
-        break;
-        case 100:
+    switch(true) {
+        case intValue  > 91 :
             value = "speed 7";
         break;
+        case intValue  > 75 :
+            value = "speed 6";
+        break;
+        case intValue  > 58 :
+            value = "speed 5";
+        break;
+        case intValue  > 42 :
+            value = "speed 4";
+        break;
+        case intValue  > 25 :
+            value = "speed 3";
+        break;
+        case intValue  > 9 :
+            value = "speed 2";
+        break;
+        case intValue  > 0:
+            value = "speed 1";
+        break;
         default:
-            value = "N/A"
+            value = "off"
     }
     
     String descriptionText = "${device.displayName} was set to speed ${value}"
