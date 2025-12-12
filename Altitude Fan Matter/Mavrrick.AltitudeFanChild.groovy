@@ -13,7 +13,7 @@
 import groovy.transform.Field
 
 @Field static final String   DEVICE_TYPE = 'MATTER_FAN'
-@Field static final String  IMPORT_URL =  'https://raw.githubusercontent.com/Mavrrick/Matter_By_Mavrrick/refs/heads/main/BAF%20Haiku%20Matter/Mavrrick.BAFHaikuHIFanChild.groovy'
+@Field static final String  IMPORT_URL =  'https://raw.githubusercontent.com/Mavrrick/Matter_By_Mavrrick/refs/heads/main/Altitude%20Fan%20Matter/Mavrrick.AltitudeFanChild.groovy'
 
 
 @Field Map getFanLevel = [
