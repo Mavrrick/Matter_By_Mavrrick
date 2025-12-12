@@ -10,7 +10,7 @@
 
 */
 
-@Field static final String  IMPORT_URL =  'https://raw.githubusercontent.com/Mavrrick/Matter_By_Mavrrick/refs/heads/main/BAF%20Haiku%20Matter/Mavrrick.BAFHaikuHILightChild.groovy'
+@Field static final String  IMPORT_URL =  'https://raw.githubusercontent.com/Mavrrick/Matter_By_Mavrrick/refs/heads/main/Altitude%20Fan%20Matter/Mavrrick.AltitudeLightChild.groovy'
 
 
 import groovy.transform.Field
