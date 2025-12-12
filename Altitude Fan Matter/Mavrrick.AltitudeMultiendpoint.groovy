@@ -12,7 +12,7 @@
 
 import groovy.transform.Field
 
-@Field static final String  IMPORT_URL =  'https://raw.githubusercontent.com/Mavrrick/Matter_By_Mavrrick/refs/heads/main/BAF%20Haiku%20Matter/Mavrrick.BAFHaikuHIMultiendpointParent.groovy'
+@Field static final String  IMPORT_URL =  'https://raw.githubusercontent.com/Mavrrick/Matter_By_Mavrrick/refs/heads/main/Altitude%20Fan%20Matter/Mavrrick.AltitudeMultiendpoint.groovy'
 
 
 @Field static final String   DEVICE_TYPE = 'MATTER_FAN'
