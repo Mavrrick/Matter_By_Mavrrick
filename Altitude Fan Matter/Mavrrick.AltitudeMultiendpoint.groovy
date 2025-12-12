@@ -18,18 +18,18 @@ import groovy.transform.Field
 @Field static final String   DEVICE_TYPE = 'MATTER_FAN'
 @Field static final String   FAN_ENDPOINT = '01'
 @Field static final String   CT_ENDPOINT = '02'
-@Field static final String   TEMP_ENDPOINT= '04'
-@Field static final String   OCCUPANCY_ENDPOINT= '06'
+// @Field static final String   TEMP_ENDPOINT= '04'
+// @Field static final String   OCCUPANCY_ENDPOINT= '06'
 
 import groovy.transform.Field
 
 metadata {
-    definition (name: "BAF Haiku H/I Multiendpoint (Parent)", namespace: "Mavrrick", author: "Mavrrick", importUrl: IMPORT_URL) {
+    definition (name: "Altitude Fan Multiendpoint (Parent)", namespace: "Mavrrick", author: "Mavrrick", importUrl: IMPORT_URL) {
         capability "Configuration"
         capability "Initialize"
         capability "Refresh"        
         
-        fingerprint endpointId:"06", inClusters:"0003,001D,0406", outClusters:"", model:"Haiku H/I Series", manufacturer:"Big Ass Fans", controllerType:"MAT"
+        fingerprint endpointId:"01", inClusters:"001D,0003,0004,0062,0006,0008,0300", outClusters:"", model:"SmartCeilingFan", manufacturer:"Eran", controllerType:"MAT"
 
     }
     preferences {
@@ -378,8 +378,8 @@ void installed(){
     sendToDevice(getClusters())
     addFanDeviceHelper()
     addLightDeviceHelper()
-    addTempDeviceHelper()
-    addOccupyDeviceHelper()
+//    addTempDeviceHelper()
+//    addOccupyDeviceHelper()
     pauseExecution(3000)
     initialize()
 }
@@ -402,7 +402,7 @@ void initialize() {
     if (childDNI.contains("${device.deviceNetworkId}-${CT_ENDPOINT}") == false) {
         addLightDeviceHelper()
     }
-    log.info "Initialize(): Calculated Temperature DNI is: "+"${device.deviceNetworkId}-${TEMP_ENDPOINT}"
+/*    log.info "Initialize(): Calculated Temperature DNI is: "+"${device.deviceNetworkId}-${TEMP_ENDPOINT}"
     def tempDNI = device.deviceNetworkId+'-'+TEMP_ENDPOINT
     if (childDNI.contains(tempDNI) == false) {
         addTempDeviceHelper()
@@ -411,7 +411,7 @@ void initialize() {
     def String occDNI = device.deviceNetworkId+'-'+OCCUPANCY_ENDPOINT
     if (childDNI.contains(occDNI) == false) {
         addOccupyDeviceHelper()
-    } 
+    } */
     if (logEnable) log.debug "initialize() Endpoints are ${endpoints}"
 }
 
@@ -444,23 +444,23 @@ String refreshCmd() {
     List<Map<String, String>> attributePaths = []
     
 //        attributePaths.add(matter.attributePath(0x00, 0x001D, 0x0003))         // Descriptor to list endpoints
-        attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0000))         // FanMode
-        attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0002))         // PercentSetting
-        attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0003))         // PercentCurrent
-        attributePaths.add(matter.attributePath(0x01, 0x0202, 0x000A))         // WindSetting
-        attributePaths.add(matter.attributePath(0x01, 0x0202, 0x000B))         // AirflowDirectionEnum
+        attributePaths.add(matter.attributePath(0x02, 0x0202, 0x0000))         // FanMode
+        attributePaths.add(matter.attributePath(0x02, 0x0202, 0x0002))         // PercentSetting
+        attributePaths.add(matter.attributePath(0x02, 0x0202, 0x0003))         // PercentCurrent
+        attributePaths.add(matter.attributePath(0x02, 0x0202, 0x000A))         // WindSetting
+        attributePaths.add(matter.attributePath(0x02, 0x0202, 0x000B))         // AirflowDirectionEnum
         attributePaths.add(matter.attributePath(0x01, 0x0003, 0x0000))         
         attributePaths.add(matter.attributePath(0x01, 0x0003, 0x0001))                        // Power Configuration Cluster : Status
     
-        attributePaths.add(matter.attributePath(0x02, 0x0006, 0x0000))
-        attributePaths.add(matter.attributePath(0x02, 0x0008, 0x0000))
-        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x0000))
-        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x0001))
-        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x0007))
+        attributePaths.add(matter.attributePath(0x01, 0x0006, 0x0000))
+        attributePaths.add(matter.attributePath(0x01, 0x0008, 0x0000))
+        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x0000))
+        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x0001))
+        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x0007))
 //        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x0008)) 
    
-        attributePaths.add(matter.attributePath(0x04, 0x0402, 0x0000))        //Temperature mesurement
-        attributePaths.add(matter.attributePath(0x06, 0x0406, 0x0000))        //Occupancy Value
+//        attributePaths.add(matter.attributePath(0x04, 0x0402, 0x0000))        //Temperature mesurement
+//        attributePaths.add(matter.attributePath(0x06, 0x0406, 0x0000))        //Occupancy Value
     
     String cmd = matter.readAttributes(attributePaths)
     return cmd
@@ -470,21 +470,22 @@ String subscribeCmd() {
     List<Map<String, String>> attributePaths = []
     String cmd = ''
     
-        attributePaths.add(matter.attributePath(0x01, 0x0202, 0x00))
-        attributePaths.add(matter.attributePath(0x01, 0x0202, 0x02))
-        attributePaths.add(matter.attributePath(0x01, 0x0202, 0x03))
-        attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0A))
-        attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0B))
-        attributePaths.add(matter.attributePath(0x02, 0x0005, 0x01))
-        attributePaths.add(matter.attributePath(0x02, 0x0006, 0x00))
-        attributePaths.add(matter.attributePath(0x02, 0x0008, 0x00))
-        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x00))
-        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x01))
-        attributePaths.add(matter.attributePath(0x02, 0x0300, 0x07))
-//        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x08))
+        attributePaths.add(matter.attributePath(0x02, 0x0202, 0x00))
+        attributePaths.add(matter.attributePath(0x02, 0x0202, 0x02))
+        attributePaths.add(matter.attributePath(0x02, 0x0202, 0x03))
+        attributePaths.add(matter.attributePath(0x02, 0x0202, 0x0A))
+        attributePaths.add(matter.attributePath(0x02, 0x0202, 0x0B))
+	
+  //      attributePaths.add(matter.attributePath(0x01, 0x0005, 0x01))
+        attributePaths.add(matter.attributePath(0x01, 0x0006, 0x00))
+        attributePaths.add(matter.attributePath(0x01, 0x0008, 0x00))
+        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x00))
+        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x01))
+        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x07))
+        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x08))
     
-        attributePaths.add(matter.attributePath(0x04, 0x0402, 0x00))
-        attributePaths.add(matter.attributePath(0x06, 0x0406, 0x00))
+//        attributePaths.add(matter.attributePath(0x04, 0x0402, 0x00))
+//        attributePaths.add(matter.attributePath(0x06, 0x0406, 0x00))
     
         cmd = matter.subscribe(0, 0xFFFF, attributePaths)
 
@@ -497,21 +498,22 @@ String cleanSubscribeCmd() {
     
    String cmd = ''
     
-    attributePaths.add(matter.attributePath(0x01, 0x0202, 0x00))
-    attributePaths.add(matter.attributePath(0x01, 0x0202, 0x02))
-    attributePaths.add(matter.attributePath(0x01, 0x0202, 0x03))
-    attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0A))
-    attributePaths.add(matter.attributePath(0x01, 0x0202, 0x0B))
-    attributePaths.add(matter.attributePath(0x02, 0x0005, 0x01))
-    attributePaths.add(matter.attributePath(0x02, 0x0006, 0x00))
-    attributePaths.add(matter.attributePath(0x02, 0x0008, 0x00))
-    attributePaths.add(matter.attributePath(0x02, 0x0300, 0x00))
-    attributePaths.add(matter.attributePath(0x02, 0x0300, 0x01))
-    attributePaths.add(matter.attributePath(0x02, 0x0300, 0x07))
-//        attributePaths.add(matter.attributePath(0x01, 0x0300, 0x08))
+    attributePaths.add(matter.attributePath(0x02, 0x0202, 0x00))
+    attributePaths.add(matter.attributePath(0x02, 0x0202, 0x02))
+    attributePaths.add(matter.attributePath(0x02, 0x0202, 0x03))
+    attributePaths.add(matter.attributePath(0x02, 0x0202, 0x0A))
+    attributePaths.add(matter.attributePath(0x02, 0x0202, 0x0B))
+	
+//    attributePaths.add(matter.attributePath(0x02, 0x0005, 0x01))
+    attributePaths.add(matter.attributePath(0x01, 0x0006, 0x00))
+    attributePaths.add(matter.attributePath(0x01, 0x0008, 0x00))
+    attributePaths.add(matter.attributePath(0x01, 0x0300, 0x00))
+    attributePaths.add(matter.attributePath(0x01, 0x0300, 0x01))
+    attributePaths.add(matter.attributePath(0x01, 0x0300, 0x07))
+    attributePaths.add(matter.attributePath(0x01, 0x0300, 0x08))
     
-    attributePaths.add(matter.attributePath(0x04, 0x0402, 0x00))
-    attributePaths.add(matter.attributePath(0x06, 0x0406, 0x00))
+//    attributePaths.add(matter.attributePath(0x04, 0x0402, 0x00))
+//    attributePaths.add(matter.attributePath(0x06, 0x0406, 0x00))
     
     return matter.cleanSubscribe(0, 0xFFFF, attributePaths)
 }
@@ -590,6 +592,7 @@ void addLightDeviceHelper() {
 	}
 }
 
+/*
 void addTempDeviceHelper() {
 	//Driver Settings
 	Map deviceType = [namespace:"Mavrrick", typeName: "BAF Haiku H/I Temprature - Child"]
@@ -632,4 +635,4 @@ void addOccupyDeviceHelper() {
 			childDev = addChildDevice(deviceTypeBak.namespace, deviceTypeBak.typeName, dni, properties)
 		}
 	}
-}
+} */
