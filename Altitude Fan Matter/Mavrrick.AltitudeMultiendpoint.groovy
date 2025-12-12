@@ -550,11 +550,11 @@ List<String> commands(List<String> cmds, Integer delay = 300) {
 
 void addFanDeviceHelper() {
 	//Driver Settings
-	Map deviceType = [namespace:"Mavrrick", typeName: "BAF Haiku H/I Fan - Child"]
+	Map deviceType = [namespace:"Mavrrick", typeName: "Altitude Fan - Child"]
 	Map deviceTypeBak = [:]
 	String devModel = deviceModel
     String dni = "${device.deviceNetworkId}-${FAN_ENDPOINT}"
-	Map properties = [endpointId: FAN_ENDPOINT, label: "BAF Haiku H/I Fan - Child"]
+	Map properties = [endpointId: FAN_ENDPOINT, label: "Altitude Fan - Child"]
 	if (debugLog) "Creating Child Fan Device"
 
 	def childDev
