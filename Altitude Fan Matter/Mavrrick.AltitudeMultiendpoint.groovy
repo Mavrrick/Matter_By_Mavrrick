@@ -16,8 +16,8 @@ import groovy.transform.Field
 
 
 @Field static final String   DEVICE_TYPE = 'MATTER_FAN'
-@Field static final String   FAN_ENDPOINT = '01'
-@Field static final String   CT_ENDPOINT = '02'
+@Field static final String   FAN_ENDPOINT = '02'
+@Field static final String   CT_ENDPOINT = '01'
 // @Field static final String   TEMP_ENDPOINT= '04'
 // @Field static final String   OCCUPANCY_ENDPOINT= '06'
 
