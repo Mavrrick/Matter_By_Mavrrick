@@ -6,7 +6,7 @@
 	2024-10-25 0.0.1 mavrrick
 		-initial pub
     
-    Built for Haiku H/I Series Fan from Big Ass Fans
+    Built for Altitude Matter Fans
 
 */
 
@@ -572,11 +572,11 @@ void addFanDeviceHelper() {
 
 void addLightDeviceHelper() {
 	//Driver Settings
-	Map deviceType = [namespace:"Mavrrick", typeName: "BAF Haiku H/I Light - Child"]
+	Map deviceType = [namespace:"Mavrrick", typeName: "Altitude Light - Child"]
 	Map deviceTypeBak = [:]
 	String devModel = deviceModel
     String dni = "${device.deviceNetworkId}-${CT_ENDPOINT}"
-	Map properties = [endpointId: CT_ENDPOINT, label: "BAF Haiku H/I Light - Child"]
+	Map properties = [endpointId: CT_ENDPOINT, label: "Altitude Light - Child"]
 	if (debugLog) "Creating Child Light Device"
 
 	def childDev
