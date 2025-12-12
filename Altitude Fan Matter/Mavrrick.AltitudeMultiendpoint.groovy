@@ -1,5 +1,5 @@
 /*
-	BAF Haiku H/I (Matter) Parent
+	Altitude Fan Multiendpoint (Parent)
 
 	Copyright 2023 Hubitat Inc.  All Rights Reserved
 
